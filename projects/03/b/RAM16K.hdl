@@ -15,5 +15,42 @@ CHIP RAM16K {
     OUT out[16];
 
     PARTS:
-    // Put your code here:
+    // mux load to particular RAM4K chip
+    DMux4Way(in = load,
+             sel = address[12..13], // msb is RAM4K address
+             a = ram4kaload,
+             b = ram4kbload,
+             c = ram4kcload,
+             d = ram4kdload);
+    // ram4ka
+    RAM4K(in = in,
+         load = ram4kaload,
+         address = address[0..11],
+         out = ram4kaout);
+
+    // ram4kb
+    RAM4K(in = in,
+         load = ram4kbload,
+         address = address[0..11],
+         out = ram4kbout);
+
+    // ram4kc
+    RAM4K(in = in,
+         load = ram4kcload,
+         address = address[0..11],
+         out = ram4kcout);
+
+    // ram4kd
+    RAM4K(in = in,
+         load = ram4kdload,
+         address = address[0..11],
+         out = ram4kdout);
+
+    // mux outputs of RAM4K chips together
+    Mux4Way16(a = ram4kaout,
+              b = ram4kbout,
+              c = ram4kcout,
+              d = ram4kdout,
+              sel = address[12..13],
+              out = out);
 }

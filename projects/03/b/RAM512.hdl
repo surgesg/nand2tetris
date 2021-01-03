@@ -15,9 +15,9 @@ CHIP RAM512 {
     OUT out[16];
 
     PARTS:
-    // mux load to particular RAM8 chip
+    // mux load to particular RAM64 chip
     DMux8Way(in = load,
-             sel = address[6..8], // msb is RAM8 address
+             sel = address[6..8], // msb is RAM64 address
              a = ram64aload,
              b = ram64bload,
              c = ram64cload,

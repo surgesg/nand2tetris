@@ -15,5 +15,74 @@ CHIP RAM4K {
     OUT out[16];
 
     PARTS:
-    // Put your code here:
+    // mux load to particular RAM512 chip
+    DMux8Way(in = load,
+             sel = address[9..11], // msb is RAM512 address
+             a = ram512aload,
+             b = ram512bload,
+             c = ram512cload,
+             d = ram512dload,
+             e = ram512eload,
+             f = ram512fload,
+             g = ram512gload,
+             h = ram512hload);
+    // ram512a
+    RAM512(in = in,
+         load = ram512aload,
+         address = address[0..8],
+         out = ram512aout);
+
+    // ram512b
+    RAM512(in = in,
+         load = ram512bload,
+         address = address[0..8],
+         out = ram512bout);
+
+    // ram512c
+    RAM512(in = in,
+         load = ram512cload,
+         address = address[0..8],
+         out = ram512cout);
+
+    // ram512d
+    RAM512(in = in,
+         load = ram512dload,
+         address = address[0..8],
+         out = ram512dout);
+
+    // ram512e
+    RAM512(in = in,
+         load = ram512eload,
+         address = address[0..8],
+         out = ram512eout);
+
+    // ram512f
+    RAM512(in = in,
+         load = ram512fload,
+         address = address[0..8],
+         out = ram512fout);
+
+    // ram512g
+    RAM512(in = in,
+         load = ram512gload,
+         address = address[0..8],
+         out = ram512gout);
+
+    // ram512h
+    RAM512(in = in,
+         load = ram512hload,
+         address = address[0..8],
+         out = ram512hout);
+
+    // mux outputs of RAM512 chips together
+    Mux8Way16(a = ram512aout,
+              b = ram512bout,
+              c = ram512cout,
+              d = ram512dout,
+              e = ram512eout,
+              f = ram512fout,
+              g = ram512gout,
+              h = ram512hout,
+              sel = address[9..11],
+              out = out);
 }
