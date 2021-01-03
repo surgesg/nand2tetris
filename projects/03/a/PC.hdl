@@ -16,5 +16,20 @@ CHIP PC {
     OUT out[16];
 
     PARTS:
-    // Put your code here:
+    // load reg?
+    Or(a = reset, b = load, out = ora);
+    Or(a = ora, b = inc, out = loadres);
+
+    // counter inc
+    Inc16(in = regout, out = incout);
+
+    // inc
+    Mux16(a = regout, b = incout, sel = inc, out = toload);
+    // load
+    Mux16(a = toload, b = in, sel = load, out = toreset);
+    // if reset
+    Mux16(a = toreset, sel = reset, out = combout);
+
+    // register
+    Register(in = combout, load = loadres, out = regout, out = out);
 }
