@@ -27,5 +27,38 @@ CHIP Memory {
     OUT out[16];
 
     PARTS:
-    // Put your code here:
+    // can use mux based on high order bits to select output
+    // x0 - x3fff is RAM
+    // so that's the first 14 bits if the top bit is low
+    // screen -
+    // 0x4000 - 0x5fff
+    // 0100 0000 0000 0000 - 0101 1111 1111 1111
+    // first 13 bits if top bit is high
+    // keyboard
+    // 0x6000 - top two bits are high
+
+    // mux load signal, And'ed with nand of top bits 
+    Nand(a = address[13], b = address[14], out = notTopBits);
+    And(a = load, b = notTopBits, out = loadEn);
+    DMux(in = loadEn, sel = address[14], a = loadRam, b = loadScreen);
+
+    // logic to select memory regions
+    // RAM
+    Not(in = address[14], out = ramSelect);
+    RAM16K(in = in, load = loadRam, address = address[0..13], out = ramOut);
+
+    // screen
+    Screen(in = in, load = loadScreen, address = address[0..12], out = screenOut);
+
+    // keyboard
+    Keyboard(out = kbd);
+
+    // mux output
+    Mux16(a = screenOut, b = ramOut, sel = ramSelect, out = ramScreen);
+    Not(in = notTopBits, out = kbdOutSel);
+    Mux16(a = ramScreen, b = kbd, sel = kbdOutSel, out = out); 
+
+    
+    
+
 }
