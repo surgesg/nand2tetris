@@ -39,5 +39,75 @@ CHIP CPU {
         pc[15];          // address of next instruction
 
     PARTS:
-    // Put your code here:
+    // decode instruction
+    // instruction[15] = i-bit: instruction type, 0 for A-instruction and
+    //                 1 for C-instruction, 
+    // instruction[0..14] = 15-bit constant for A-instruction
+    // else C-instruction:
+    // instruction[12] = comp a-bit
+    // instruction[6..11] = comp c-bits
+    // instruction[3..5] = dest
+    // instrction[0..2] = jump
+
+    Not(in = instruction[15], out = AInstruction);
+    Not(in = AInstruction, out = CInstruction);
+
+    // ARegister
+    Mux16(a = instruction,
+          b = aluOutput,
+          sel = CInstruction,
+          out = ARegInput);
+
+    Or(a = AInstruction, b = instruction[5], out = loadAReg);
+    ARegister(in = ARegInput,
+              load = loadAReg,
+              out = regAOut,
+              out[0..14] = addressM);
+
+    // DRegister
+    And(a = instruction[4], b = CInstruction, out = loadDReg);
+    DRegister(in = aluOutput, load = loadDReg, out = regDOut);
+
+    // ALU A/M Input
+    Mux16(b = inM, a = regAOut, sel = instruction[12], out = aluAMInput);
+
+    // ALU
+    ALU(x = regDOut, y = aluAMInput,
+        zx = instruction[11], // zero the x input
+        nx = instruction[10], // negate x input
+        zy = instruction[9], // zero the y input
+        ny = instruction[8], // negate y input
+        f  = instruction[7], // function code: 1 for add, 0 for and
+        no = instruction[6], // negate output
+        out = aluOutput,
+        out = outM,
+        zr = aluZero,
+        ng = aluNeg);
+
+    Not(in = aluNeg, out = aluPos);
+
+    // jmp codes
+    And(a = instruction[2], b = aluNeg,  out = jumpNeg);
+    And(a = instruction[1], b = aluZero, out = jumpZero);
+
+    // handle edge case - zero is also positive
+    Not(in = aluZero, out = notZero);
+    And(a = aluPos, b = notZero, out = exclPos);
+    And(a = instruction[0], b = exclPos,  out = jumpPos);
+
+    Or(a = jumpNeg, b = jumpZero, out = jw1);
+    Or(a = jw1, b = jumpPos, out = jmp);
+    And(a = jmp, b = CInstruction, out = jump);
+
+    Not(in = jump, out = notJump);
+
+    // program counter
+    PC(in = regAOut,
+       load = jump,
+       inc = notJump,
+       reset = reset,
+       out[0..14] = pc);
+
+    // writeM is instruction[3]
+    And(a = instruction[3], b = CInstruction, out = writeM);
 }
