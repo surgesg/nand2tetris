@@ -38,9 +38,29 @@ bool Parser::hasMoreCommands()
 
 void Parser::advance()
 {
+   std::string cur_line;
    if (hasMoreCommands())
    {
-      std::getline(fs_, currentCommand_);
+      bool skip_line = true;
+      while (skip_line)
+      {
+         std::getline(fs_, cur_line);
+
+         // skip comments and empty lines
+         if (cur_line.find("//") != std::string::npos)
+         {
+            skip_line = true;
+         }
+         else if (cur_line.empty())
+         {
+            skip_line = true;
+         }
+         else
+         {
+            skip_line = false;
+         }
+      }
+      currentCommand_ = cur_line;
       std::cout << "read command: " << currentCommand_ << std::endl;
    }
 }
@@ -104,6 +124,7 @@ std::string Parser::comp()
    int end_pos = currentCommand_.find_first_of (";");
    if (start_pos >= 0)
    {
+      // probably don't need this clause
       if (end_pos >= 0)
       {
          ret = currentCommand_.substr(start_pos + 1, end_pos);

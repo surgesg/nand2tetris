@@ -2,6 +2,7 @@
 #include <string>
 
 #include "Parser.h"
+#include "Code.h"
 
 int main(int argc, char* argv[])
 {
@@ -20,6 +21,7 @@ int main(int argc, char* argv[])
                 << std::endl;
       input_filename = argv[1];
 
+      Code code;
       Parser parser(input_filename);
       if (parser.fileOpen())
       {
@@ -33,8 +35,10 @@ int main(int argc, char* argv[])
             }
             else
             {
-               parser.dest();
-               parser.comp();
+               std::string dest_str = parser.dest();
+               code.dest(dest_str);
+               std::string comp_str = parser.comp();
+               code.comp(comp_str);
                parser.jump();
             }
          }
