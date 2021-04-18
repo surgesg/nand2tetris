@@ -48,7 +48,7 @@ std::string Code::dest(std::string mnemonic)
          ret = "000";
       }
    }
-   std::cout << "dest resulted in bin: " << ret << std::endl;
+   // std::cout << "dest resulted in bin: " << ret << std::endl;
    return ret;
 }
 
@@ -61,7 +61,6 @@ std::string Code::comp(std::string mnemonic)
    }
    else
    {
-      std::cout << "mnemonic was " << mnemonic << "." << std::endl;
       if (mnemonic.compare("0") == 0)
       {
          ret = "0101010";
@@ -175,6 +174,52 @@ std::string Code::comp(std::string mnemonic)
          ret = "1010101";
       }
    }
-   std::cout << "comp resulted in bin: " << ret << std::endl;
+   // std::cout << "comp resulted in bin: " << ret << std::endl;
+   return ret;
+}
+
+std::string Code::jump(std::string mnemonic)
+{
+   std::string ret;
+   if (mnemonic.empty())
+   {
+      ret = "000";
+   }
+   else
+   {
+      if (mnemonic.compare("JGT") == 0)
+      {
+         ret = "001";
+      }
+      else if (mnemonic.compare("JEQ") == 0)
+      {
+         ret = "010";
+      }
+      else if (mnemonic.compare("JGE") == 0)
+      {
+         ret = "011";
+      }
+      else if (mnemonic.compare("JLT") == 0)
+      {
+         ret = "100";
+      }
+      else if (mnemonic.compare("JNE") == 0)
+      {
+         ret = "101";
+      }
+      else if (mnemonic.compare("JLE") == 0)
+      {
+         ret = "110";
+      }
+      else if (mnemonic.compare("JMP") == 0)
+      {
+         ret = "111";
+      }
+      else
+      {
+         ret = "000";
+      }
+   }
+   // std::cout << "jump resulted in bin: " << ret << std::endl;
    return ret;
 }

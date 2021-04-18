@@ -36,13 +36,14 @@ bool Parser::hasMoreCommands()
    return ret;
 }
 
-void Parser::advance()
+bool Parser::advance()
 {
+   bool line_valid = false;
    std::string cur_line;
-   if (hasMoreCommands())
+   bool skip_line = true;
+   while (skip_line)
    {
-      bool skip_line = true;
-      while (skip_line)
+      if (hasMoreCommands())
       {
          std::getline(fs_, cur_line);
 
@@ -58,11 +59,20 @@ void Parser::advance()
          else
          {
             skip_line = false;
+            currentCommand_ = cur_line;
+            std::cout << "read command: " << currentCommand_ << std::endl;
+            line_valid = true;
          }
       }
-      currentCommand_ = cur_line;
-      std::cout << "read command: " << currentCommand_ << std::endl;
+      else
+      {
+         line_valid = false;
+         currentCommand_ = "";
+         std::cout << "reached end of file " << std::endl;
+         break;
+      }
    }
+   return line_valid;
 }
 
 COMMAND_TYPE Parser::commandType()
@@ -92,14 +102,14 @@ std::string Parser::symbol()
    {
       start_pos = 1 + currentCommand_.find_first_of("@");
       ret = currentCommand_.substr(start_pos);
-      std::cout << "parsed symbol: " << ret << std::endl;
+      // std::cout << "parsed symbol: " << ret << std::endl;
    }
    else if (commandType() == COMMAND_TYPE::L_COMMAND)
    {
       int end_pos = currentCommand_.find_first_of(")");
       start_pos = 1 + currentCommand_.find_first_of("(");
       ret = currentCommand_.substr(start_pos, end_pos - start_pos);
-      std::cout << "parsed symbol: " << ret << std::endl;
+      // std::cout << "parsed symbol: " << ret << std::endl;
    }
    return ret;
 }
@@ -112,7 +122,7 @@ std::string Parser::dest()
    if (end_pos >= 0)
    {
       ret = currentCommand_.substr(start_pos, end_pos - start_pos);
-      std::cout << "parsed dest: " << ret << std::endl;
+      // std::cout << "parsed dest: " << ret << std::endl;
    }
    return ret;
 }
@@ -149,7 +159,7 @@ std::string Parser::comp()
          }
       }
    }
-   std::cout << "parsed comp: " << ret << std::endl;
+   // std::cout << "parsed comp: " << ret << std::endl;
    return ret;
 }
 
@@ -160,7 +170,7 @@ std::string Parser::jump()
    if (start_pos >= 0)
    {
       ret = currentCommand_.substr(start_pos + 1);
-      std::cout << "parsed jump: " << ret << std::endl;
+      // std::cout << "parsed jump: " << ret << std::endl;
    }
    return ret;
 }

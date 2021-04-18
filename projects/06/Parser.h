@@ -18,7 +18,7 @@ class Parser
    Parser(std::string filename);
    bool hasMoreCommands();
    bool fileOpen();
-   void advance();
+   bool advance();
    COMMAND_TYPE commandType();
    std::string symbol();
    std::string dest();
