@@ -7,7 +7,7 @@
 int main(int argc, char* argv[])
 {
    std::string input_filename;
-   std::fstream file;
+   std::fstream output_file;
 
    if (argc < 2 || argc > 2)
    {
@@ -25,48 +25,68 @@ int main(int argc, char* argv[])
       Parser parser(input_filename);
       if (parser.fileOpen())
       {
-         while (parser.hasMoreCommands())
+         // setup and open output file
+         std::string output_filename;
+         int split_pos = input_filename.find_first_of(".");
+         output_filename = input_filename.substr(0, split_pos);
+         output_filename += ".hack";
+         std::cout << "Opening output file: "
+                   << output_filename
+                   << "...";
+         output_file.open(output_filename.c_str(), std::fstream::out | std::fstream::trunc);
+
+         if (output_file.is_open())
          {
-            if (parser.advance())
+            std::cout << "Success!" << std::endl;
+            while (parser.hasMoreCommands())
             {
-               std::string next_word;
-               if (parser.commandType() == COMMAND_TYPE::A_COMMAND ||
-                   parser.commandType() == COMMAND_TYPE::L_COMMAND)
+               if (parser.advance())
                {
-                  std::string symbol = parser.symbol();
-                  // check if number
-                  if (symbol.find_first_not_of("0123456789") == std::string::npos)
+                  std::string next_word;
+                  if (parser.commandType() == COMMAND_TYPE::A_COMMAND ||
+                      parser.commandType() == COMMAND_TYPE::L_COMMAND)
                   {
-                     int num = std::stoi(symbol);
-                     next_word = std::bitset<16>(num).to_string();
+                     std::string symbol = parser.symbol();
+                     // check if number
+                     if (symbol.find_first_not_of("0123456789") == std::string::npos)
+                     {
+                        int num = std::stoi(symbol);
+                        next_word = std::bitset<16>(num).to_string();
+                     }
+                     else
+                     {
+                        std::cout << "symbol is name" << std::endl;
+                     }
                   }
                   else
                   {
-                     std::cout << "symbol is name" << std::endl;
+                     next_word += "111";
+                     std::string comp_str = parser.comp();
+                     std::string comp_bits = code.comp(comp_str);
+                     next_word += comp_bits;
+
+                     std::string dest_str = parser.dest();
+                     std::string dest_bits = code.dest(dest_str);
+                     next_word += dest_bits;
+
+                     std::string jump_str = parser.jump();
+                     std::string jump_bits = code.jump(jump_str);
+                     next_word += jump_bits;
                   }
+                  std::cout << "output word: " << next_word << std::endl;
+                  output_file << next_word << std::endl;
                }
-               else
-               {
-                  next_word += "111";
-                  std::string dest_str = parser.dest();
-                  std::string dest_bits = code.dest(dest_str);
-                  next_word += dest_bits;
-
-                  std::string comp_str = parser.comp();
-                  std::string comp_bits = code.comp(comp_str);
-                  next_word += comp_bits;
-
-                  std::string jump_str = parser.jump();
-                  std::string jump_bits = code.jump(jump_str);
-                  next_word += jump_bits;
-               }
-               std::cout << "output word: " << next_word << std::endl;
             }
+            output_file.close();
+         }
+         else
+         {
+            std::cout << "Failed to open output file - Exiting" << std::endl;
          }
       }
       else
       {
-         std::cout << "Failed - Exiting" << std::endl;
+         std::cout << "Failed to open input file - Exiting" << std::endl;
       }
 
    }
