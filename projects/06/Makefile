@@ -1,7 +1,7 @@
-all: assembler.o parser.o code.o
-	g++ -o assembler assembler.o parser.o code.o
+all: assembler.o parser.o code.o symboltable.o
+	g++ -o assembler assembler.o parser.o code.o symboltable.o
 
-assembler.o: assembler.cpp Parser.h Code.h
+assembler.o: assembler.cpp Parser.h Code.h SymbolTable.h
 	g++ -c assembler.cpp
 
 parser.o: Parser.h Parser.cpp
@@ -9,4 +9,7 @@ parser.o: Parser.h Parser.cpp
 
 code.o: Code.h Code.cpp
 	g++ -c Code.cpp
+
+symboltable.o: SymbolTable.h SymbolTable.cpp
+	g++ -c SymbolTable.cpp
 

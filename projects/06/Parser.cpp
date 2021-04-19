@@ -48,17 +48,36 @@ bool Parser::advance()
          std::getline(fs_, cur_line);
 
          // skip comments and empty lines
+         // remove comments
          if (cur_line.find("//") != std::string::npos)
          {
-            skip_line = true;
+            int comment_loc = cur_line.find("//");
+            if (comment_loc == 0)
+            {
+               cur_line = "";
+            }
+            else
+            {
+               cur_line = cur_line.substr(0, comment_loc - 1);
+               int end_of_command = cur_line.find_last_not_of(" ");
+               cur_line = cur_line.substr(0, end_of_command + 1);
+               int beg_of_command = cur_line.find_first_not_of(" ");
+               cur_line = cur_line.substr(beg_of_command);
+            }
          }
-         else if (cur_line.empty())
+         if (cur_line.empty())
          {
             skip_line = true;
          }
          else
          {
             skip_line = false;
+
+            int end_of_command = cur_line.find_last_not_of(" ");
+            cur_line = cur_line.substr(0, end_of_command + 1);
+            int beg_of_command = cur_line.find_first_not_of(" ");
+            cur_line = cur_line.substr(beg_of_command);
+
             currentCommand_ = cur_line;
             std::cout << "read command: " << currentCommand_ << std::endl;
             line_valid = true;
@@ -73,6 +92,12 @@ bool Parser::advance()
       }
    }
    return line_valid;
+}
+
+void Parser::reset()
+{
+   fs_.clear();
+   fs_.seekp(0);
 }
 
 COMMAND_TYPE Parser::commandType()

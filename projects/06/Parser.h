@@ -20,6 +20,7 @@ class Parser
    bool fileOpen();
    bool advance();
    COMMAND_TYPE commandType();
+   void reset();
    std::string symbol();
    std::string dest();
    std::string comp();
