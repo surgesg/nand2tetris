@@ -47,111 +47,80 @@ void CodeWriter::writePushPop(COMMAND_TYPE command, std::string segment, int ind
    }
 }
 
+void CodeWriter::decSP()
+{
+   outputFile_ << "@SP" << std::endl;
+   outputFile_ << "M=M-1" << std::endl;
+}
+
+void CodeWriter::incSP()
+{
+   outputFile_ << "@SP" << std::endl;
+   outputFile_ << "M=M+1" << std::endl;
+}
+
 void CodeWriter::writeArithmetic(std::string command)
 {
+   decSP();
+
    if (command.compare("add") == 0)
    {
-      // decrement sp
-      outputFile_ << "@SP" << std::endl;
-      outputFile_ << "M=M-1" << std::endl;
-
       // load first arg from top of stack into d
       outputFile_ << "@SP" << std::endl;
       outputFile_ << "A=M" << std::endl;
       outputFile_ << "D=M" << std::endl;
 
-      // decrement sp
-      outputFile_ << "@SP" << std::endl;
-      outputFile_ << "M=M-1" << std::endl;
+      decSP();
 
       // add D and data pointed to by A
       outputFile_ << "@SP"   << std::endl;
       outputFile_ << "A=M"   << std::endl;
       outputFile_ << "M=D+M" << std::endl;
-
-      // increment sp
-      outputFile_ << "@SP" << std::endl;
-      outputFile_ << "M=M+1" << std::endl;
-
    }
    else if (command.compare("sub") == 0)
    {
-      // decrement sp
-      outputFile_ << "@SP" << std::endl;
-      outputFile_ << "M=M-1" << std::endl;
-
       // load first arg from top of stack into d
       outputFile_ << "@SP" << std::endl;
       outputFile_ << "A=M" << std::endl;
       outputFile_ << "D=M" << std::endl;
 
-      // decrement sp
-      outputFile_ << "@SP" << std::endl;
-      outputFile_ << "M=M-1" << std::endl;
+      decSP();
 
       // add D and data pointed to by A
       outputFile_ << "@SP"   << std::endl;
       outputFile_ << "A=M"   << std::endl;
       outputFile_ << "M=M-D" << std::endl;
-
-      // increment sp
-      outputFile_ << "@SP" << std::endl;
-      outputFile_ << "M=M+1" << std::endl;
    }
    else if (command.compare("and") == 0)
    {
-      // decrement sp
-      outputFile_ << "@SP" << std::endl;
-      outputFile_ << "M=M-1" << std::endl;
-
       // load first arg from top of stack into d
       outputFile_ << "@SP" << std::endl;
       outputFile_ << "A=M" << std::endl;
       outputFile_ << "D=M" << std::endl;
 
-      // decrement sp
-      outputFile_ << "@SP" << std::endl;
-      outputFile_ << "M=M-1" << std::endl;
+      decSP();
 
       // and D and data pointed to by A
       outputFile_ << "@SP"   << std::endl;
       outputFile_ << "A=M"   << std::endl;
       outputFile_ << "M=D&M" << std::endl;
-
-      // increment sp
-      outputFile_ << "@SP" << std::endl;
-      outputFile_ << "M=M+1" << std::endl;
    }
    else if (command.compare("or") == 0)
    {
-      // decrement sp
-      outputFile_ << "@SP" << std::endl;
-      outputFile_ << "M=M-1" << std::endl;
-
       // load first arg from top of stack into d
       outputFile_ << "@SP" << std::endl;
       outputFile_ << "A=M" << std::endl;
       outputFile_ << "D=M" << std::endl;
 
-      // decrement sp
-      outputFile_ << "@SP" << std::endl;
-      outputFile_ << "M=M-1" << std::endl;
+      decSP();
 
       // and D and data pointed to by A
       outputFile_ << "@SP"   << std::endl;
       outputFile_ << "A=M"   << std::endl;
       outputFile_ << "M=D|M" << std::endl;
-
-      // increment sp
-      outputFile_ << "@SP" << std::endl;
-      outputFile_ << "M=M+1" << std::endl;
    }
    else if (command.compare("neg") == 0)
    {
-      // decrement sp
-      outputFile_ << "@SP" << std::endl;
-      outputFile_ << "M=M-1" << std::endl;
-
       // load first arg from top of stack into d
       outputFile_ << "@SP" << std::endl;
       outputFile_ << "A=M" << std::endl;
@@ -159,42 +128,24 @@ void CodeWriter::writeArithmetic(std::string command)
       // 2s complement negation
       outputFile_ << "M=!M" << std::endl;
       outputFile_ << "M=M+1" << std::endl;
-
-      // increment sp
-      outputFile_ << "@SP" << std::endl;
-      outputFile_ << "M=M+1" << std::endl;
    }
    else if (command.compare("not") == 0)
    {
-      // decrement sp
-      outputFile_ << "@SP" << std::endl;
-      outputFile_ << "M=M-1" << std::endl;
-
       // load first arg from top of stack 
       outputFile_ << "@SP" << std::endl;
       outputFile_ << "A=M" << std::endl;
 
       // not
       outputFile_ << "M=!M" << std::endl;
-
-      // increment sp
-      outputFile_ << "@SP" << std::endl;
-      outputFile_ << "M=M+1" << std::endl;
    }
    else if (command.compare("eq") == 0)
    {
-       // decrement sp
-       outputFile_ << "@SP" << std::endl;
-       outputFile_ << "M=M-1" << std::endl;
-
        // load first arg from top of stack into d
        outputFile_ << "@SP" << std::endl;
        outputFile_ << "A=M" << std::endl;
        outputFile_ << "D=M" << std::endl;
 
-       // decrement sp
-       outputFile_ << "@SP" << std::endl;
-       outputFile_ << "M=M-1" << std::endl;
+       decSP();
 
        // compare D and data pointed to by A
        outputFile_ << "@SP"   << std::endl;
@@ -220,26 +171,16 @@ void CodeWriter::writeArithmetic(std::string command)
 
        outputFile_ << "(END." << logicOpCounter_ << ")" << std::endl;
 
-       // increment sp
-       outputFile_ << "@SP" << std::endl;
-       outputFile_ << "M=M+1" << std::endl;
-
        ++logicOpCounter_;
    }
    else if (command.compare("lt") == 0)
    {
-      // decrement sp
-      outputFile_ << "@SP" << std::endl;
-      outputFile_ << "M=M-1" << std::endl;
-
       // load first arg from top of stack into d
       outputFile_ << "@SP" << std::endl;
       outputFile_ << "A=M" << std::endl;
       outputFile_ << "D=M" << std::endl;
 
-      // decrement sp
-      outputFile_ << "@SP" << std::endl;
-      outputFile_ << "M=M-1" << std::endl;
+      decSP();
 
       // compare D and data pointed to by A
       outputFile_ << "@SP"   << std::endl;
@@ -265,26 +206,16 @@ void CodeWriter::writeArithmetic(std::string command)
 
       outputFile_ << "(END." << logicOpCounter_ << ")" << std::endl;
 
-      // increment sp
-      outputFile_ << "@SP" << std::endl;
-      outputFile_ << "M=M+1" << std::endl;
-
       ++logicOpCounter_;
    }
    else if (command.compare("gt") == 0)
    {
-      // decrement sp
-      outputFile_ << "@SP" << std::endl;
-      outputFile_ << "M=M-1" << std::endl;
-
       // load first arg from top of stack into d
       outputFile_ << "@SP" << std::endl;
       outputFile_ << "A=M" << std::endl;
       outputFile_ << "D=M" << std::endl;
 
-      // decrement sp
-      outputFile_ << "@SP" << std::endl;
-      outputFile_ << "M=M-1" << std::endl;
+      decSP();
 
       // compare D and data pointed to by A
       outputFile_ << "@SP"   << std::endl;
@@ -310,26 +241,8 @@ void CodeWriter::writeArithmetic(std::string command)
 
       outputFile_ << "(END." << logicOpCounter_ << ")" << std::endl;
 
-      // increment sp
-      outputFile_ << "@SP" << std::endl;
-      outputFile_ << "M=M+1" << std::endl;
-
       ++logicOpCounter_;
    }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+   incSP();
 }
