@@ -76,7 +76,16 @@ void CodeWriter::writePushPop(COMMAND_TYPE command, std::string segment, int ind
          }
          else if (segment.compare("static") == 0)
          {
-            
+            // store value in D
+            outputFile_ << "@" << currentInputFilename_ << "." << index << std::endl;
+            outputFile_ << "D=M"   << std::endl;
+
+            // push onto stack
+            outputFile_ << "@SP" << std::endl;
+            outputFile_ << "A=M" << std::endl;
+            outputFile_ << "M=D" << std::endl;
+
+            incSP();
          }
          else if (segment.compare("this") == 0)
          {
@@ -199,6 +208,19 @@ void CodeWriter::writePushPop(COMMAND_TYPE command, std::string segment, int ind
          // load value from D into addr at R13
          outputFile_ << "@R13"  << std::endl;
          outputFile_ << "A=M" << std::endl;
+         outputFile_ << "M=D"  << std::endl;
+      }
+      else if (segment.compare("static") == 0)
+      {
+         decSP();
+
+         // load value from stack into D
+         outputFile_ << "@SP" << std::endl;
+         outputFile_ << "A=M" << std::endl;
+         outputFile_ << "D=M" << std::endl;
+
+         // load value from D into static var
+         outputFile_ << "@" << currentInputFilename_ << "." << index << std::endl;
          outputFile_ << "M=D"  << std::endl;
       }
       else if (segment.compare("this") == 0)

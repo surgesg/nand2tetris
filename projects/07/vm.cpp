@@ -26,10 +26,15 @@ int main(int argc, char* argv[])
          // setup and open output file
          std::string output_filename;
          int split_pos = input_filename.find_first_of(".");
-         output_filename = input_filename.substr(0, split_pos);
+         std::string input_filename_split = input_filename.substr(0, split_pos);
+         output_filename = input_filename_split;
          output_filename += ".asm";
 
          CodeWriter writer(output_filename);
+         // remove directory path
+         split_pos = input_filename_split.find_last_of("/");
+         input_filename_split = input_filename_split.substr(split_pos + 1);
+         writer.setFilename(input_filename_split);
 
          if (writer.outputFileOpen())
          {
