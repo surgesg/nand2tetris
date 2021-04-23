@@ -42,9 +42,6 @@ int main(int argc, char* argv[])
             {
                if (parser.advance())
                {
-                  std::cout << "command type: "
-                            << parser.commandType()
-                            << std::endl;
                   if (parser.commandType() == C_PUSH ||
                       parser.commandType() == C_POP)
                   {
@@ -61,19 +58,12 @@ int main(int argc, char* argv[])
          }
          else
          {
-            
+            std::cout << "Failed to open output file - Exiting" << std::endl;
          }
-
-
-
-
-
       }
       else
       {
          std::cout << "Failed to open input file - Exiting" << std::endl;
       }
-
-
    }
 }
