@@ -40,10 +40,214 @@ void CodeWriter::writePushPop(COMMAND_TYPE command, std::string segment, int ind
          outputFile_ << "@SP" << std::endl;
          outputFile_ << "M=M+1" << std::endl;
       }
+      else
+      {
+         if (segment.compare("argument") == 0)
+         {
+            // store value in D
+            outputFile_ << "@ARG"  << std::endl;
+            outputFile_ << "D=M"   << std::endl;
+            outputFile_ << "@"     << index << std::endl;
+            outputFile_ << "A=D+A" << std::endl;
+            outputFile_ << "D=M"   << std::endl;
+
+            // push onto stack
+            outputFile_ << "@SP" << std::endl;
+            outputFile_ << "A=M" << std::endl;
+            outputFile_ << "M=D" << std::endl;
+
+            incSP();
+         }
+         else if (segment.compare("local") == 0)
+         {
+            // store value in D
+            outputFile_ << "@LCL"  << std::endl;
+            outputFile_ << "D=M"   << std::endl;
+            outputFile_ << "@"     << index << std::endl;
+            outputFile_ << "A=D+A" << std::endl;
+            outputFile_ << "D=M"   << std::endl; 
+
+            // push onto stack
+            outputFile_ << "@SP" << std::endl;
+            outputFile_ << "A=M" << std::endl;
+            outputFile_ << "M=D" << std::endl;
+
+            incSP();
+         }
+         else if (segment.compare("static") == 0)
+         {
+            
+         }
+         else if (segment.compare("this") == 0)
+         {
+            // store value in D
+            outputFile_ << "@THIS"  << std::endl;
+            outputFile_ << "D=M"   << std::endl;
+            outputFile_ << "@"     << index << std::endl;
+            outputFile_ << "A=D+A" << std::endl;
+            outputFile_ << "D=M"   << std::endl;
+
+            // push onto stack
+            outputFile_ << "@SP" << std::endl;
+            outputFile_ << "A=M" << std::endl;
+            outputFile_ << "M=D" << std::endl;
+
+            incSP();
+         }
+         else if (segment.compare("that") == 0)
+         {
+            // store value in D
+            outputFile_ << "@THAT"  << std::endl;
+            outputFile_ << "D=M"   << std::endl;
+            outputFile_ << "@"     << index << std::endl;
+            outputFile_ << "A=D+A" << std::endl;
+            outputFile_ << "D=M"   << std::endl;
+
+            // push onto stack
+            outputFile_ << "@SP" << std::endl;
+            outputFile_ << "A=M" << std::endl;
+            outputFile_ << "M=D" << std::endl;
+
+            incSP();
+
+
+
+
+         }
+         else if (segment.compare("pointer") == 0)
+         {
+            
+         }
+         else if (segment.compare("temp") == 0)
+         {
+            // store value in D
+            outputFile_ << "@R5"   << std::endl;
+            outputFile_ << "D=A"   << std::endl;
+            outputFile_ << "@"     << index << std::endl;
+            outputFile_ << "A=D+A" << std::endl;
+            outputFile_ << "D=M"   << std::endl;
+
+            // push onto stack
+            outputFile_ << "@SP" << std::endl;
+            outputFile_ << "A=M" << std::endl;
+            outputFile_ << "M=D" << std::endl;
+
+            incSP();
+         }
+      }
    }
    else if (command == C_POP)
    {
+      if (segment.compare("local") == 0)
+      {
+         // store addr in R13
+         outputFile_ << "@LCL" << std::endl;
+         outputFile_ << "D=M" << std::endl;
+         outputFile_ << "@" << index << std::endl;
+         outputFile_ << "D=D+A" << std::endl;
+         outputFile_ << "@R13"  << std::endl;
+         outputFile_ << "M=D"  << std::endl;
 
+         decSP();
+
+         // load value from stack into D
+         outputFile_ << "@SP" << std::endl;
+         outputFile_ << "A=M" << std::endl;
+         outputFile_ << "D=M" << std::endl;
+
+         // load value from D into addr at R13
+         outputFile_ << "@R13"  << std::endl;
+         outputFile_ << "A=M" << std::endl;
+         outputFile_ << "M=D"  << std::endl;
+      }
+      else if (segment.compare("argument") == 0)
+      {
+         // store addr in R13
+         outputFile_ << "@ARG" << std::endl;
+         outputFile_ << "D=M" << std::endl;
+         outputFile_ << "@" << index << std::endl;
+         outputFile_ << "D=D+A" << std::endl;
+         outputFile_ << "@R13"  << std::endl;
+         outputFile_ << "M=D"  << std::endl;
+
+         decSP();
+
+         // load value from stack into D
+         outputFile_ << "@SP" << std::endl;
+         outputFile_ << "A=M" << std::endl;
+         outputFile_ << "D=M" << std::endl;
+
+         // load value from D into addr at R13
+         outputFile_ << "@R13"  << std::endl;
+         outputFile_ << "A=M" << std::endl;
+         outputFile_ << "M=D"  << std::endl;
+      }
+      else if (segment.compare("this") == 0)
+      {
+         // store addr in R13
+         outputFile_ << "@THIS" << std::endl;
+         outputFile_ << "D=M" << std::endl;
+         outputFile_ << "@" << index << std::endl;
+         outputFile_ << "D=D+A" << std::endl;
+         outputFile_ << "@R13"  << std::endl;
+         outputFile_ << "M=D"  << std::endl;
+
+         decSP();
+
+         // load value from stack into D
+         outputFile_ << "@SP" << std::endl;
+         outputFile_ << "A=M" << std::endl;
+         outputFile_ << "D=M" << std::endl;
+
+         // load value from D into addr at R13
+         outputFile_ << "@R13"  << std::endl;
+         outputFile_ << "A=M" << std::endl;
+         outputFile_ << "M=D"  << std::endl;
+      }
+      else if (segment.compare("that") == 0)
+      {
+         // store addr in R13
+         outputFile_ << "@THAT" << std::endl;
+         outputFile_ << "D=M" << std::endl;
+         outputFile_ << "@" << index << std::endl;
+         outputFile_ << "D=D+A" << std::endl;
+         outputFile_ << "@R13"  << std::endl;
+         outputFile_ << "M=D"  << std::endl;
+
+         decSP();
+
+         // load value from stack into D
+         outputFile_ << "@SP" << std::endl;
+         outputFile_ << "A=M" << std::endl;
+         outputFile_ << "D=M" << std::endl;
+
+         // load value from D into addr at R13
+         outputFile_ << "@R13"  << std::endl;
+         outputFile_ << "A=M" << std::endl;
+         outputFile_ << "M=D"  << std::endl;
+      }
+      else if (segment.compare("temp") == 0)
+      {
+         // store addr in R13
+         outputFile_ << "@R5" << std::endl;
+         outputFile_ << "D=A" << std::endl;
+         outputFile_ << "@" << index << std::endl;
+         outputFile_ << "D=D+A" << std::endl;
+         outputFile_ << "@R13"  << std::endl;
+         outputFile_ << "M=D"  << std::endl;
+
+         decSP();
+
+         // load value from stack into D
+         outputFile_ << "@SP" << std::endl;
+         outputFile_ << "A=M" << std::endl;
+         outputFile_ << "D=M" << std::endl;
+
+         // load value from D into addr at R13
+         outputFile_ << "@R13"  << std::endl;
+         outputFile_ << "A=M" << std::endl;
+         outputFile_ << "M=D"  << std::endl;
+      }
    }
 }
 
