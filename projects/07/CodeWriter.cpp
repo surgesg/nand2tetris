@@ -116,7 +116,26 @@ void CodeWriter::writePushPop(COMMAND_TYPE command, std::string segment, int ind
          }
          else if (segment.compare("pointer") == 0)
          {
-            
+            // store value in D                                     
+            outputFile_ << "@R3"  << std::endl;
+            outputFile_ << "D=A"   << std::endl;
+            outputFile_ << "@"     << index << std::endl;
+            outputFile_ << "A=D+A" << std::endl;
+            outputFile_ << "D=M"   << std::endl;
+
+            // push onto stack
+            outputFile_ << "@SP" << std::endl;
+            outputFile_ << "A=M" << std::endl;
+            outputFile_ << "M=D" << std::endl;
+
+            incSP();
+
+
+
+
+
+
+
          }
          else if (segment.compare("temp") == 0)
          {
@@ -209,6 +228,28 @@ void CodeWriter::writePushPop(COMMAND_TYPE command, std::string segment, int ind
          // store addr in R13
          outputFile_ << "@THAT" << std::endl;
          outputFile_ << "D=M" << std::endl;
+         outputFile_ << "@" << index << std::endl;
+         outputFile_ << "D=D+A" << std::endl;
+         outputFile_ << "@R13"  << std::endl;
+         outputFile_ << "M=D"  << std::endl;
+
+         decSP();
+
+         // load value from stack into D
+         outputFile_ << "@SP" << std::endl;
+         outputFile_ << "A=M" << std::endl;
+         outputFile_ << "D=M" << std::endl;
+
+         // load value from D into addr at R13
+         outputFile_ << "@R13"  << std::endl;
+         outputFile_ << "A=M" << std::endl;
+         outputFile_ << "M=D"  << std::endl;
+      }
+      else if (segment.compare("pointer") == 0)
+      {
+         // store addr in R13
+         outputFile_ << "@R3" << std::endl;
+         outputFile_ << "D=A" << std::endl;
          outputFile_ << "@" << index << std::endl;
          outputFile_ << "D=D+A" << std::endl;
          outputFile_ << "@R13"  << std::endl;
