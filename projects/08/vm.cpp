@@ -104,6 +104,18 @@ int main(int argc, char* argv[])
                         {
                            writer.writeArithmetic(parser.arg1());
                         }
+                        else if (parser.commandType() == C_LABEL)
+                        {
+                           writer.writeLabel(parser.arg1());
+                        }
+                        else if (parser.commandType() == C_GOTO)
+                        {
+                           writer.writeGoto(parser.arg1());
+                        }
+                        else if (parser.commandType() == C_IF)
+                        {
+                           writer.writeIf(parser.arg1());
+                        }
                      }
                   }
                }

@@ -12,6 +12,13 @@ class CodeWriter
    void setFilename(std::string inputFilename);
    void writeArithmetic(std::string command);
    void writePushPop(COMMAND_TYPE command, std::string segment, int index);
+   void writeInit();
+   void writeLabel(std::string label);
+   void writeGoto(std::string label);
+   void writeIf(std::string label);
+   void writeCall(std::string functionName, int numArgs) {};
+   void writeReturn() {};
+   void writeFunction(std::string functionName, int numLocals) {};
 
   private:
    void decSP();

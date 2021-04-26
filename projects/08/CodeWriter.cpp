@@ -407,38 +407,38 @@ void CodeWriter::writeArithmetic(std::string command)
    }
    else if (command.compare("eq") == 0)
    {
-       // load first arg from top of stack into d
-       outputFile_ << "@SP" << std::endl;
-       outputFile_ << "A=M" << std::endl;
-       outputFile_ << "D=M" << std::endl;
+      // load first arg from top of stack into d
+      outputFile_ << "@SP" << std::endl;
+      outputFile_ << "A=M" << std::endl;
+      outputFile_ << "D=M" << std::endl;
 
-       decSP();
+      decSP();
 
-       // compare D and data pointed to by A
-       outputFile_ << "@SP"   << std::endl;
-       outputFile_ << "A=M"   << std::endl;
-       outputFile_ << "D=D-M" << std::endl;
+      // compare D and data pointed to by A
+      outputFile_ << "@SP"   << std::endl;
+      outputFile_ << "A=M"   << std::endl;
+      outputFile_ << "D=D-M" << std::endl;
 
-       // jump if sub result == 0
-       outputFile_ << "@TRUE." << logicOpCounter_ << std::endl;
-       outputFile_ << "D;JEQ" << std::endl;
+      // jump if sub result == 0
+      outputFile_ << "@TRUE." << logicOpCounter_ << std::endl;
+      outputFile_ << "D;JEQ" << std::endl;
 
-       // write false result
-       outputFile_ << "@SP" << std::endl;
-       outputFile_ << "A=M"   << std::endl;
-       outputFile_ << "M=0" << std::endl;
-       outputFile_ << "@END." << logicOpCounter_ << std::endl;
-       outputFile_ << "0;JMP" << std::endl;
+      // write false result
+      outputFile_ << "@SP" << std::endl;
+      outputFile_ << "A=M"   << std::endl;
+      outputFile_ << "M=0" << std::endl;
+      outputFile_ << "@END." << logicOpCounter_ << std::endl;
+      outputFile_ << "0;JMP" << std::endl;
 
-       // write true result
-       outputFile_ << "(TRUE." << logicOpCounter_ << ")" << std::endl;
-       outputFile_ << "@SP" << std::endl;
-       outputFile_ << "A=M"   << std::endl;
-       outputFile_ << "M=-1" << std::endl;
+      // write true result
+      outputFile_ << "(TRUE." << logicOpCounter_ << ")" << std::endl;
+      outputFile_ << "@SP" << std::endl;
+      outputFile_ << "A=M"   << std::endl;
+      outputFile_ << "M=-1" << std::endl;
 
-       outputFile_ << "(END." << logicOpCounter_ << ")" << std::endl;
+      outputFile_ << "(END." << logicOpCounter_ << ")" << std::endl;
 
-       ++logicOpCounter_;
+      ++logicOpCounter_;
    }
    else if (command.compare("lt") == 0)
    {
@@ -512,4 +512,49 @@ void CodeWriter::writeArithmetic(std::string command)
    }
 
    incSP();
+}
+
+void CodeWriter::writeLabel(std::string label)
+{
+   outputFile_ << "("
+               << currentInputFilename_
+               << "."
+               << label
+               << ")"
+               << std::endl;
+}
+
+void CodeWriter::writeGoto(std::string label)
+{
+   outputFile_ << "@"
+               << currentInputFilename_
+               << "."
+               << label
+               << std::endl;
+}
+
+void CodeWriter::writeIf(std::string label)
+{
+   decSP();
+   outputFile_ << "@SP" << std::endl;
+   outputFile_ << "A=M" << std::endl;
+   outputFile_ << "D=M" << std::endl;
+   outputFile_ << "@"
+               << currentInputFilename_
+               << "."
+               << label
+               << std::endl;
+   outputFile_ << "D;JGT" << std::endl;
+}
+
+
+
+
+
+
+
+
+void CodeWriter::writeInit()
+{
+
 }
