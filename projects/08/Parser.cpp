@@ -167,6 +167,30 @@ COMMAND_TYPE Parser::commandType()
    {
       command_type = C_ARITHMETIC;
    }
+   else if (currentCommand_[0].compare("label") == 0)
+   {
+      command_type = C_LABEL;
+   }
+   else if (currentCommand_[0].compare("goto") == 0)
+   {
+      command_type = C_GOTO;
+   }
+   else if (currentCommand_[0].compare("if-goto") == 0)
+   {
+      command_type = C_IF;
+   }
+   else if (currentCommand_[0].compare("function") == 0)
+   {
+      command_type = C_FUNCTION;
+   }
+   else if (currentCommand_[0].compare("return") == 0)
+   {
+      command_type = C_RETURN;
+   }
+   else if (currentCommand_[0].compare("call") == 0)
+   {
+      command_type = C_CALL;
+   }
 
    return command_type;
 }
