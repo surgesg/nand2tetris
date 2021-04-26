@@ -57,7 +57,8 @@ bool Parser::advance()
          while (std::getline(string_to_split, token, ' '))
          {
             // check for comment, break if one found
-            if (token.find("//") == std::string::npos)
+            if (token.find("//") == std::string::npos
+                && token.empty() == false)
             {
                currentCommand_.push_back(token);
             }
