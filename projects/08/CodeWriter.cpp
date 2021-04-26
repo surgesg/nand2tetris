@@ -531,6 +531,7 @@ void CodeWriter::writeGoto(std::string label)
                << "."
                << label
                << std::endl;
+   outputFile_ << "0;JMP" << std::endl;
 }
 
 void CodeWriter::writeIf(std::string label)
