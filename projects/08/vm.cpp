@@ -116,6 +116,18 @@ int main(int argc, char* argv[])
                         {
                            writer.writeIf(parser.arg1());
                         }
+                        else if (parser.commandType() == C_CALL)
+                        {
+                           writer.writeCall(parser.arg1(), parser.arg2());
+                        }
+                        else if (parser.commandType() == C_FUNCTION)
+                        {
+                           writer.writeFunction(parser.arg1(), parser.arg2());
+                        }
+                        else if (parser.commandType() == C_RETURN)
+                        {
+                           writer.writeReturn();
+                        }
                      }
                   }
                }

@@ -548,10 +548,202 @@ void CodeWriter::writeIf(std::string label)
    outputFile_ << "D;JGT" << std::endl;
 }
 
+void CodeWriter::writeFunction(std::string functionName, int numLocals)
+{
+   outputFile_ << "("
+               << currentInputFilename_
+               << "."
+               << functionName
+               << ")"
+               << std::endl;
 
+   // push local variables onto stack
+   for (int i = 0; i < numLocals; ++i)
+   {
+      outputFile_ << "@SP" << std::endl;
+      outputFile_ << "A=M" << std::endl;
+      outputFile_ << "M=0" << std::endl;
 
+      incSP();
+   }
+}
 
+void CodeWriter::writeCall(std::string functionName, int numArgs)
+{
+   std::string return_addr = currentInputFilename_
+      + "-return-address-"
+      + std::to_string(returnAddrCounter_++);
 
+   // push return addr
+   outputFile_ << "@" << return_addr << std::endl;
+   outputFile_ << "D=A" << std::endl;
+
+   outputFile_ << "@SP" << std::endl;
+   outputFile_ << "A=M" << std::endl;
+   outputFile_ << "M=D" << std::endl;
+
+   incSP();
+
+   // push LCL
+   outputFile_ << "@LCL" << std::endl;
+   outputFile_ << "D=M" << std::endl;
+
+   outputFile_ << "@SP" << std::endl;
+   outputFile_ << "A=M" << std::endl;
+   outputFile_ << "M=D" << std::endl;
+
+   incSP();
+
+   // push ARG
+   outputFile_ << "@ARG" << std::endl;
+   outputFile_ << "D=M" << std::endl;
+
+   outputFile_ << "@SP" << std::endl;
+   outputFile_ << "A=M" << std::endl;
+   outputFile_ << "M=D" << std::endl;
+
+   incSP();
+
+   // push THIS
+   outputFile_ << "@THIS" << std::endl;
+   outputFile_ << "D=M" << std::endl;
+
+   outputFile_ << "@SP" << std::endl;
+   outputFile_ << "A=M" << std::endl;
+   outputFile_ << "M=D" << std::endl;
+
+   incSP();
+
+   // push THAT
+   outputFile_ << "@THAT" << std::endl;
+   outputFile_ << "D=M" << std::endl;
+
+   outputFile_ << "@SP" << std::endl;
+   outputFile_ << "A=M" << std::endl;
+   outputFile_ << "M=D" << std::endl;
+
+   incSP();
+
+   // reposition ARG
+   outputFile_ << "@SP" << std::endl;
+   outputFile_ << "D=M" << std::endl;
+
+   outputFile_ << "@" << numArgs << std::endl;
+   outputFile_ << "D=D-A" << std::endl;
+
+   outputFile_ << "@5" << std::endl;
+   outputFile_ << "D=D-A" << std::endl;
+
+   outputFile_ << "@ARG" << std::endl;
+   outputFile_ << "M=D" << std::endl;
+
+   // reposition LCL
+   outputFile_ << "@SP" << std::endl;
+   outputFile_ << "D=M" << std::endl;
+
+   outputFile_ << "@ARG" << std::endl;
+   outputFile_ << "M=D" << std::endl;
+
+   // goto f
+   outputFile_ << "@"
+               << currentInputFilename_
+               << "."
+               << functionName
+               << std::endl;
+   outputFile_ << "0;JMP" << std::endl;
+
+   // label function return point
+   writeLabel(return_addr);
+}
+
+void CodeWriter::writeReturn()
+{
+   // FRAME in R13
+   outputFile_ << "@LCL" << std::endl;
+   outputFile_ << "D=M" << std::endl;
+   outputFile_ << "@R13" << std::endl;
+   outputFile_ << "M=D" << std::endl;
+
+   // RET in R14
+   outputFile_ << "@5" << std::endl;
+   outputFile_ << "D=A" << std::endl;
+   outputFile_ << "@R13" << std::endl;
+   outputFile_ << "D=M-D" << std::endl;
+   outputFile_ << "A=D" << std::endl;
+   outputFile_ << "D=M" << std::endl;
+   outputFile_ << "@R14" << std::endl;
+   outputFile_ << "M=D" << std::endl;
+
+   // reposition the return value for the caller
+   // load first arg from top of stack into d
+   decSP();
+
+   outputFile_ << "@SP" << std::endl;
+   outputFile_ << "A=M" << std::endl;
+   outputFile_ << "D=M" << std::endl;
+
+   // store return value in R15
+   outputFile_ << "@R15" << std::endl;
+   outputFile_ << "M=D" << std::endl;
+
+   // restore SP of the caller
+   outputFile_ << "@ARG" << std::endl;
+   outputFile_ << "D=M+1" << std::endl;
+   outputFile_ << "@SP" << std::endl;
+   outputFile_ << "M=D" << std::endl;
+
+   // store return value in ARG
+   outputFile_ << "@R15" << std::endl;
+   outputFile_ << "D=M" << std::endl;
+   outputFile_ << "@ARG" << std::endl;
+   outputFile_ << "A=M" << std::endl;
+   outputFile_ << "M=D" << std::endl;
+
+   // restore THAT of the caller
+   outputFile_ << "@1" << std::endl;
+   outputFile_ << "D=A" << std::endl;
+   outputFile_ << "@R13" << std::endl;
+   outputFile_ << "D=M-D" << std::endl;
+   outputFile_ << "A=D" << std::endl;
+   outputFile_ << "D=M" << std::endl;
+   outputFile_ << "@THAT" << std::endl;
+   outputFile_ << "M=D" << std::endl;
+
+   // restore THIS of the caller
+   outputFile_ << "@2" << std::endl;
+   outputFile_ << "D=A" << std::endl;
+   outputFile_ << "@R13" << std::endl;
+   outputFile_ << "D=M-D" << std::endl;
+   outputFile_ << "A=D" << std::endl;
+   outputFile_ << "D=M" << std::endl;
+   outputFile_ << "@THIS" << std::endl;
+   outputFile_ << "M=D" << std::endl;
+
+   // restore ARG of the caller
+   outputFile_ << "@3" << std::endl;
+   outputFile_ << "D=A" << std::endl;
+   outputFile_ << "@R13" << std::endl;
+   outputFile_ << "D=M-D" << std::endl;
+   outputFile_ << "A=D" << std::endl;
+   outputFile_ << "D=M" << std::endl;
+   outputFile_ << "@ARG" << std::endl;
+   outputFile_ << "M=D" << std::endl;
+
+   // restore LCL of the caller
+   outputFile_ << "@4" << std::endl;
+   outputFile_ << "D=A" << std::endl;
+   outputFile_ << "@R13" << std::endl;
+   outputFile_ << "D=M-D" << std::endl;
+   outputFile_ << "A=D" << std::endl;
+   outputFile_ << "D=M" << std::endl;
+   outputFile_ << "@LCL" << std::endl;
+   outputFile_ << "M=D" << std::endl;
+
+   // goto RET
+   outputFile_ << "@R14" << std::endl;
+   outputFile_ << "A=M" << std::endl;
+   outputFile_ << "0;JMP" << std::endl;
+}
 
 
 

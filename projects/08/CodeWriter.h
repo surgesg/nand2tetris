@@ -16,9 +16,9 @@ class CodeWriter
    void writeLabel(std::string label);
    void writeGoto(std::string label);
    void writeIf(std::string label);
-   void writeCall(std::string functionName, int numArgs) {};
-   void writeReturn() {};
-   void writeFunction(std::string functionName, int numLocals) {};
+   void writeCall(std::string functionName, int numArgs);
+   void writeReturn();
+   void writeFunction(std::string functionName, int numLocals);
 
   private:
    void decSP();
@@ -26,4 +26,5 @@ class CodeWriter
    std::fstream outputFile_;
    std::string currentInputFilename_;
    int logicOpCounter_ = 0;
+   int returnAddrCounter_ = 0;
 };
