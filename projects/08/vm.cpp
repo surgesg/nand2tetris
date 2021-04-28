@@ -10,7 +10,7 @@
 
 int main(int argc, char* argv[])
 {
-   if (argc < 2 || argc > 2)
+   if (argc < 3 || argc > 3)
    {
       std::cout << "Invalid arguments supplied" << std::endl;
    }
@@ -18,11 +18,15 @@ int main(int argc, char* argv[])
    {
       bool path_err = false;
       std::string input_path;
-      std::cout << "Initializing Parser module with .vm source file: "
+      std::string output_path;
+      std::cout << "Initializing Parser module with .vm source file / directory: "
                 << argv[1]
+                << " and output file: "
+                << argv[2]
                 << "."
                 << std::endl;
       input_path = argv[1];
+      output_path = argv[2];
 
       // get list of files
       std::vector<std::string> src_files;
@@ -49,6 +53,7 @@ int main(int argc, char* argv[])
             std::string new_fname = entry->d_name;
             if (new_fname.find(".vm") != std::string::npos)
             {
+               new_fname = input_path + new_fname;
                src_files.push_back(new_fname);
             }
          }
@@ -68,18 +73,24 @@ int main(int argc, char* argv[])
       if (!path_err)
       {
          // setup and open output file
-         std::string output_filename;
-         int split_pos = input_path.find_first_of(".");
-         std::string input_filename_split = input_path.substr(0, split_pos);
-         output_filename = input_filename_split;
-         output_filename += ".asm";
+         // std::string output_filename;
+         // int split_pos = input_path.find_first_of(".");
+         // std::string input_filename_split = input_path.substr(0, split_pos);
+         // output_filename = input_filename_split;
+         // output_filename += ".asm";
 
-         CodeWriter writer(output_filename);
+         CodeWriter writer(output_path);
 
          if (writer.outputFileOpen())
          {
+            writer.setFilename("Sys");
+            writer.writeInit();
             for (auto file_path : src_files)
             {
+               int split_pos = file_path.find_last_of(".");
+               std::string input_filename_split = file_path.substr(0, split_pos);
+
+               std::cout << input_filename_split << std::endl;
                Parser parser(file_path);
 
                if (parser.fileOpen())

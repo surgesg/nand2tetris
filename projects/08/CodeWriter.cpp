@@ -641,7 +641,7 @@ void CodeWriter::writeCall(std::string functionName, int numArgs)
    outputFile_ << "@SP" << std::endl;
    outputFile_ << "D=M" << std::endl;
 
-   outputFile_ << "@ARG" << std::endl;
+   outputFile_ << "@LCL" << std::endl;
    outputFile_ << "M=D" << std::endl;
 
    // goto f
@@ -653,7 +653,10 @@ void CodeWriter::writeCall(std::string functionName, int numArgs)
    outputFile_ << "0;JMP" << std::endl;
 
    // label function return point
-   writeLabel(return_addr);
+   outputFile_ << "("
+               << return_addr
+               << ")"
+               << std::endl;
 }
 
 void CodeWriter::writeReturn()
@@ -749,5 +752,10 @@ void CodeWriter::writeReturn()
 
 void CodeWriter::writeInit()
 {
+   outputFile_ << "@256" << std::endl;
+   outputFile_ << "D=A" << std::endl;
+   outputFile_ << "@SP" << std::endl;
+   outputFile_ << "M=D" << std::endl;
 
+   writeCall("Sys.init", 0);
 }

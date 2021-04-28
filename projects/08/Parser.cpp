@@ -2,6 +2,7 @@
 #include <string>
 #include <fstream>
 #include <sstream>
+#include <algorithm>
 
 Parser::Parser(std::string filename)
 {
@@ -48,6 +49,8 @@ bool Parser::advance()
       {
          currentCommand_.clear();
          std::getline(fs_, cur_line);
+         // replace tabs with spaces so splitting code below works
+         std::replace(cur_line.begin(), cur_line.end(), '\t', ' ');
 
          // skip comments and empty lines
          // remove comments
