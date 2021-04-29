@@ -545,14 +545,14 @@ void CodeWriter::writeIf(std::string label)
                << "."
                << label
                << std::endl;
-   outputFile_ << "D;JGT" << std::endl;
+   outputFile_ << "D;JNE" << std::endl;
 }
 
 void CodeWriter::writeFunction(std::string functionName, int numLocals)
 {
    outputFile_ << "("
-               << currentInputFilename_
-               << "."
+               // << currentInputFilename_
+               // << "."
                << functionName
                << ")"
                << std::endl;
@@ -646,8 +646,8 @@ void CodeWriter::writeCall(std::string functionName, int numArgs)
 
    // goto f
    outputFile_ << "@"
-               << currentInputFilename_
-               << "."
+               // << currentInputFilename_
+               // << "."
                << functionName
                << std::endl;
    outputFile_ << "0;JMP" << std::endl;
